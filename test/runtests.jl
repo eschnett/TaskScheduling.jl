@@ -58,3 +58,21 @@ submit() do
 end
 runtasks()
 @test counter[] == 100
+
+# A real-world example
+mats = Matrix{Float64}[]
+for i in 1:100
+    sz = rand(10:100)
+    A = rand(sz,sz)
+    push!(mats, A)
+end
+svds = Vector{Any}(100)
+for i in 1:100
+    submit() do
+        svds[i] = svd(mats[i])
+    end
+end
+runtasks()
+for i in 1:100
+    @test isa(svds[i][2], Vector{Float64})
+end
